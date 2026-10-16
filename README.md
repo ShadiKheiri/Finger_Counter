@@ -4,7 +4,7 @@ A real-time finger counter built with Python, OpenCV, MediaPipe and Streamlit. I
 
 ## Live Demo
 
-Try the app here: [Finger Counter Demo](https://finger-counter-demo.streamlit.app/)
+Try the app here: [Finger Counter Demo](https://finger-counter-app.streamlit.app/)
 
 ## Features
 
