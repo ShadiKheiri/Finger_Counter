@@ -273,12 +273,13 @@ st.title("Live Finger Counter")
 
 st.subheader("Show your fingers and count them!")
 
-st.write("Click START to turn the camera on and STOP to turn it off")
+run = st.checkbox("Click to turn the camera on/off")
 
-# START / STOP button turns the camera on/off
+# the checkbox turns the camera on/off (so the START, STOP and SELECT DEVICE buttons are not shown)
 # when the user turns OFF the camera, the camera is released automatically
 webrtc_streamer(
     key="finger-counter",
+    desired_playing_state=run,
     video_processor_factory=FingerCounter,
     media_stream_constraints={"video": True, "audio": False}, # only camera, no microphone
     rtc_configuration={"iceServers": get_ice_servers()}, # helps to connect the browser camera to the app online
