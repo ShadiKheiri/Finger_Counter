@@ -22,7 +22,6 @@ Try the app here: [Finger Counter Demo](https://finger-counter-app.streamlit.app
 - A finger is counted as open when the fingertip is in front of the middle joint, the finger is straight (angle more than 150 degrees), and it is not bent toward the back
 - The thumb has its own rules: it must move away from the palm sideways, be far from the center of the palm, and be mostly straight
 - The number of open fingers is written on the video for each hand
-- Online, the video goes through a free TURN server from Metered so the browser camera can connect to the app
 
 ## How to Run
 
