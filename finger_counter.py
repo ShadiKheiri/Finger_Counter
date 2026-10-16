@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase # to use the camera in the browser
 import av # to change the camera frames to images and back
-import requests # to get the TURN servers from cloudflare
+import requests # to get the TURN servers from metered
 import cv2
 import math # for geometic calculations
 import mediapipe as mp  # Google's library for detecting hands, face, pose
@@ -245,33 +245,24 @@ class FingerCounter(VideoProcessorBase):
 
 
 # online, the browser and the streamlit server can't connect to each other directly,
-# so the video goes through a TURN server from cloudflare (free)
-# the cloudflare keys are saved in the streamlit secrets (not on github)
+# so the video goes through a TURN server from metered.ca (free)
+# the metered keys are saved in the streamlit secrets (not on github)
 # on my own computer there are no secrets, so only the free google STUN server is used
-@st.cache_data(ttl=3600) # get new TURN servers every hour (they are valid for 24 hours)
+@st.cache_data(ttl=3600) # get the TURN servers again every hour
 def get_ice_servers():
     try:
-        key_id = st.secrets["CLOUDFLARE_TURN_KEY_ID"]
-        api_token = st.secrets["CLOUDFLARE_TURN_API_TOKEN"]
+        domain = st.secrets["METERED_DOMAIN"] # ex: yourdomain.metered.live
+        api_key = st.secrets["METERED_API_KEY"]
     except Exception:
         return [{"urls": ["stun:stun.l.google.com:19302"]}]
 
-    response = requests.post(
-        f"https://rtc.live.cloudflare.com/v1/turn/keys/{key_id}/credentials/generate-ice-servers",
-        headers={"Authorization": f"Bearer {api_token}"},
-        json={"ttl": 86400}, # 24 hours
+    response = requests.get(
+        f"https://{domain.replace('https://', '').strip('/')}/api/v1/turn/credentials",
+        params={"apiKey": api_key},
         timeout=10,
     )
     response.raise_for_status()
-    ice_servers = response.json()["iceServers"]
-    if isinstance(ice_servers, dict): # sometimes it is one server and not a list
-        ice_servers = [ice_servers]
-
-    # browsers block port 53, so remove those urls (otherwise the connection becomes slow)
-    for server in ice_servers:
-        urls = server["urls"] if isinstance(server["urls"], list) else [server["urls"]]
-        server["urls"] = [url for url in urls if ":53?" not in url and not url.endswith(":53")]
-    return ice_servers
+    return response.json() # list of STUN and TURN servers
 
 
 st.title("Live Finger Counter")
