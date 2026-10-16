@@ -2,6 +2,10 @@
 
 A real-time finger counter built with Python, OpenCV, MediaPipe and Streamlit. It uses the webcam to detect your hands and count how many fingers are open on each hand.
 
+## Live Demo
+
+Try the app here: [Finger Counter Demo](https://finger-counter-demo.streamlit.app/)
+
 ## Features
 
 - Detects up to two hands at the same time
