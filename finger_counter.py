@@ -281,7 +281,10 @@ webrtc_streamer(
     key="finger-counter",
     desired_playing_state=run,
     video_processor_factory=FingerCounter,
-    media_stream_constraints={"video": True, "audio": False}, # only camera, no microphone
+    media_stream_constraints={
+        "video": {"width": {"ideal": 960}, "height": {"ideal": 540}}, # better quality than the default 640x480
+        "audio": False, # only camera, no microphone
+    },
     rtc_configuration={"iceServers": get_ice_servers()}, # helps to connect the browser camera to the app online
 )
 
