@@ -13,7 +13,7 @@ Try the app here: [Finger Counter Demo](https://finger-counter-app.streamlit.app
 - Left hand is shown in red and right hand is shown in blue
 - Works even when the hand is tilted or rotated
 - Uses the camera in the browser, so it works online and locally
-- Turn the camera on and off with the START and STOP buttons
+- Turn the camera on and off with one checkbox
 
 ## How It Works
 
@@ -22,10 +22,15 @@ Try the app here: [Finger Counter Demo](https://finger-counter-app.streamlit.app
 - A finger is counted as open when the fingertip is in front of the middle joint, the finger is straight (angle more than 150 degrees), and it is not bent toward the back
 - The thumb has its own rules: it must move away from the palm sideways, be far from the center of the palm, and be mostly straight
 - The number of open fingers is written on the video for each hand
+- Online, the video goes through a free TURN server from Metered so the browser camera can connect to the app
 
 ## How to Run
+
+Requires Python 3.9 to 3.12 (MediaPipe 0.10.21 does not support newer versions).
 
 ```
 pip install -r requirements.txt
 streamlit run finger_counter.py
 ```
+
+Then open the app in your browser and click the checkbox to turn the camera on.
