@@ -1,7 +1,6 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase # to use the camera in the browser
 import av # to change the camera frames to images and back
-import requests # to get the TURN servers from metered
 import cv2
 import math # for geometic calculations
 import mediapipe as mp  # Google's library for detecting hands, face, pose
@@ -246,23 +245,28 @@ class FingerCounter(VideoProcessorBase):
 
 # online, the browser and the streamlit server can't connect to each other directly,
 # so the video goes through a TURN server from metered.ca (free)
-# the metered keys are saved in the streamlit secrets (not on github)
+# the metered username and password are saved in the streamlit secrets (not on github)
 # on my own computer there are no secrets, so only the free google STUN server is used
-@st.cache_data(ttl=3600) # get the TURN servers again every hour
 def get_ice_servers():
     try:
-        domain = st.secrets["METERED_DOMAIN"] # ex: yourdomain.metered.live
-        api_key = st.secrets["METERED_API_KEY"]
+        username = st.secrets["METERED_USERNAME"]
+        password = st.secrets["METERED_PASSWORD"]
     except Exception:
         return [{"urls": ["stun:stun.l.google.com:19302"]}]
 
-    response = requests.get(
-        f"https://{domain.replace('https://', '').strip('/')}/api/v1/turn/credentials",
-        params={"apiKey": api_key},
-        timeout=10,
-    )
-    response.raise_for_status()
-    return response.json() # list of STUN and TURN servers
+    return [
+        {"urls": ["stun:stun.relay.metered.ca:80"]},
+        {
+            "urls": [
+                "turn:global.relay.metered.ca:80",
+                "turn:global.relay.metered.ca:80?transport=tcp",
+                "turn:global.relay.metered.ca:443",
+                "turns:global.relay.metered.ca:443?transport=tcp",
+            ],
+            "username": username,
+            "credential": password,
+        },
+    ]
 
 
 st.title("Live Finger Counter")
